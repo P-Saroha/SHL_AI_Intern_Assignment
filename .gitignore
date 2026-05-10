@@ -1,0 +1,25 @@
+# Python environments
+myenv/
+.venv/
+
+# Environment files
+.env
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Pytest cache
+.pytest_cache/
+
+# Local data artifacts
+app/data/model_cache/
+app/data/*.faiss
+app/data/*_metadata.json
+app/data/*_catalog.json
+
+# Reference conversations (keep local)
+sample_conversations/
+
+# OS artifacts
+.DS_Store
