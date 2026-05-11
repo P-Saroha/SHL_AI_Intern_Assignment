@@ -106,9 +106,17 @@ class HybridRetriever:
     def load_index(self) -> None:
         """Load the saved FAISS index and metadata from disk."""
         if not self.index_path.exists() or not self.metadata_path.exists():
-            raise FileNotFoundError(
-                "Retrieval files are missing. Run: python -m app.retriever --build --force-download"
-            )
+            # On some deployment platforms, build artifacts may not persist.
+            # Fall back to building the index at runtime to keep the API alive.
+            loader = CatalogLoader(settings.catalog_path, settings.catalog_url)
+            catalog = loader.load(download_if_missing=True)
+            if not catalog:
+                raise FileNotFoundError(
+                    "Retrieval files are missing and catalog download failed. "
+                    "Run: python -m app.retriever --build --force-download"
+                )
+            self.catalog = catalog
+            self.build_and_save()
 
         faiss = _import_faiss()
         self._index = faiss.read_index(str(self.index_path))
